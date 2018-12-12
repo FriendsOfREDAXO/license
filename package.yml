@@ -1,0 +1,28 @@
+package: ylicense
+version: '0.9.0'
+author: Yakamara Media GmbH & Co. KG
+supportpage: https://github.com/yakamara/ylicense
+
+page:
+    title: 'translate:title'
+    subpages:
+        main:
+            title: 'translate:main'
+            perm: ylicense[]
+            icon: rex-icon fa-list
+        table:
+            title: 'translate:astable'
+            perm: ylicense[]
+            icon: rex-icon fa-table
+        config:
+            title: 'translate:config'
+            perm: admin
+            icon: rex-icon fa-wrench
+requires:
+    redaxo: '^5.5'
+    php:
+        version: '>=5.6' # benötigt mindestens PHP 5.6
+
+console_commands:
+    ylicense:list: list_short
+    ylicense:list-full: list_full

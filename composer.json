@@ -1,0 +1,16 @@
+{
+  "name": "yakamara/ylicense",
+  "description": "License Check Addon for Redaxo 5",
+  "homepage": "https://github.com/yakamara/redaxo_ylicense",
+  "version": "0.9.0",
+  "authors": [
+  {
+    "name": "Kai Kristinus"
+  }
+  ],
+  "license": "MIT",
+  "require": {
+      "symfony/finder": "^4.2",
+    "setasign/fpdf": "1.8.1"
+  }
+}

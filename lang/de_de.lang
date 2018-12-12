@@ -1,0 +1,11 @@
+ylicense_title = YLicense
+ylicense_main = Kurzübersicht
+
+ylicense_main_title = Lizenzen
+config = Konfiguration
+
+ylicense_astable = Als Tabelle
+ylicense_config_legend = Einstellungen
+ylicense_additional_paths = Weitere Pfade<br />(relativ oder absolut auf Server<br />Getrennt du \n)
+ylicense_config_save = Speichern
+ylicense_config_saved = Konfiguration gespeichert
