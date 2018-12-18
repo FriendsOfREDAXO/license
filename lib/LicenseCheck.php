@@ -34,7 +34,11 @@ class LicenseCheck
                 $data['license-text'] = $file->getContents();
 
                 $f = fopen($file->getRealPath(), 'r');
-                $firstLine = fgets($f);
+                while ($firstLine = fgets($f)) {
+                    if (trim($firstLine) != '') {
+                        break;
+                    }
+                }
                 fclose($f);
                 if (!isset($data['license'])) {
                     $data['license'] = $firstLine;
@@ -97,7 +101,12 @@ class LicenseCheck
                 $markdown .= '<br /><strong>'.$counter.'. '.$project['name'].'</strong><ul>';
                 foreach ($fields as $field) {
                     if (isset($project[$field])) {
-                        $markdown .= '<li>'.strtoupper($field).': '.trim($project[$field]).'</li>';
+                        if ($field == 'license') {
+                            $markdown .= '<li>'.strtoupper($field).': <span class="label label-default">'.trim($project[$field]).'</span></li>';
+                        }
+                        else {
+                            $markdown .= '<li>'.strtoupper($field).': '.trim($project[$field]).'</li>';
+                        }
                     }
                 }
                 $counter++;
