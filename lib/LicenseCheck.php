@@ -11,9 +11,15 @@ class LicenseCheck
 {
     static public $licenseFiles = array('composer.json','package.json','LICENSE*');
 
-    static public function getReposFromPath($path) {
+    static public function getReposFromPath($path,$recursive = true,$displayWithNoLicense = false)
+    {
         $finder = new Finder();
-        $finder->files()->ignoreUnreadableDirs()->in($path)->name(LicenseCheck::$licenseFiles);
+        if ($recursive) {
+            $finder->files()->ignoreUnreadableDirs()->in($path)->name(LicenseCheck::$licenseFiles);
+        }
+        else {
+            $finder->files()->ignoreUnreadableDirs()->in($path)->depth(1)->name(LicenseCheck::$licenseFiles);
+        }
         foreach ($finder as $file) {
             if (!isset($projects[dirname($file->getRealPath())])) {
                 $tmp = LicenseCheck::getReposInfo(dirname($file->getRealPath()));
@@ -25,7 +31,8 @@ class LicenseCheck
         return $projects;
     }
 
-    static public function getReposInfo($path) {
+    static public function getReposInfo($path)
+    {
         $finder = new Finder();
         $finder->files()->in($path)->name(self::$licenseFiles)->depth(0);
         $data = array();
@@ -54,19 +61,20 @@ class LicenseCheck
         if (!isset($data['name'])) {
             $data['name'] = basename($path);
         }
-        if (isset($data['license']) && is_array($data['license'])) {
-            $data['license'] = implode(', ',$data['license']);
-        }
-        if (!isset($data['license'])) {
-           return false;
+
+
+        if (isset($data['license'])) {
+            $data['license'] = YLicenseStandardizer::standardize($data['license']);
         }
         else {
-            $data['path'] = str_replace(rex_path::base(),'',$path);
+            return false;
         }
+        $data['path'] = str_replace(rex_path::base(),'',$path);
         return $data;
     }
 
-    static public function displayProjectsAsMarkDown($projects,$full = false) {
+    static public function displayProjectsAsMarkDown($projects,$full = false)
+    {
         $markdown = self::setHeadline();
         $fields = explode(',','license,version,homepage,license-read-from,path,license-text');
 
@@ -80,6 +88,9 @@ class LicenseCheck
                                 $markdown .= "\n* ".strtoupper($field).': '.trim($project[$field]);
                             }
                         }
+                        elseif ($field == 'license' && is_array($project[$field])) {
+                            $markdown .= "\n* ".strtoupper($field).': '.trim(implode(',',$project[$field]));
+                        }
                         else {
                             $markdown .= "\n* ".strtoupper($field).': '.trim($project[$field]);
                         }
@@ -90,7 +101,8 @@ class LicenseCheck
         return $markdown;
     }
 
-    static public function displayProjectsAsHtml($projects) {
+    static public function displayProjectsAsHtml($projects)
+    {
         $markdown = self::setHeadline().'<br />';
         $markdown .= sizeof($projects).' license paths found<br />';
         $fields = explode(',','license,version,homepage,license-read-from,path');
@@ -102,7 +114,11 @@ class LicenseCheck
                 foreach ($fields as $field) {
                     if (isset($project[$field])) {
                         if ($field == 'license') {
-                            $markdown .= '<li>'.strtoupper($field).': <span class="label label-default">'.trim($project[$field]).'</span></li>';
+                            $license = $project[$field];
+                            if (is_array($project[$field])) {
+                                $license = implode(',',$project[$field]);
+                            }
+                            $markdown .= '<li>'.strtoupper($field).': <span class="label label-default">'.trim($license).'</span></li>';
                         }
                         else {
                             $markdown .= '<li>'.strtoupper($field).': '.trim($project[$field]).'</li>';
@@ -116,7 +132,8 @@ class LicenseCheck
         return $markdown;
     }
 
-    static public function displayProjectsAsPdf($projects) {
+    static public function displayProjectsAsPdf($projects)
+    {
         $pdf = new FPDF();
         $pdf->AddPage();
         $pdf->SetDisplayMode('fullpage','single');
@@ -141,6 +158,9 @@ class LicenseCheck
                             $pdf->ln();
                             $pdf->MultiCell(190,3,trim(utf8_decode($project[$field])));
                         }
+                        elseif ($field == 'license' && is_array($project[$field])) {
+                            $pdf->Cell(190,4,strtoupper($field).': '.trim(utf8_decode(implode(',',$project[$field]))),0,1,'L');
+                        }
                         else {
                             $pdf->Cell(190,4,strtoupper($field).': '.trim(utf8_decode($project[$field])),0,1,'L');
                         }
@@ -152,38 +172,66 @@ class LicenseCheck
 
         return $pdf;
     }
-    static public function displayProjectsAsTable($projects) {
+    static public function displayProjectsAsTable($projects)
+    {
         $content = '<table class="table table-striped">';
         $content .= '<thead><tr><th>Name</th><th>License</th><th>Version</th>';
 
         $content .= '</tr></thead><tbody>';
+        $licenseTypes = array();
         foreach ($projects AS $project) {
+            $licenseClass = '';
+            if (is_array($project['license'])) {
+                foreach ($project['license'] AS $license) {
+                    $licenseKey = 'license-'.md5($license);
+                    $licenseTypes[$licenseKey]['name'] = $license;
+                    $licenseTypes[$licenseKey]['cnt'] = (!isset($licenseTypes[$licenseKey]['cnt'])) ? 1 : $licenseTypes[$licenseKey]['cnt'] + 1;
+                    $licenseClass .= ' '.$licenseKey;
+                }
+            }
+            else {
+                $licenseKey = 'license-'.md5($project['license']);
+                $licenseTypes[$licenseKey]['name'] = $project['license'];
+                $licenseTypes[$licenseKey]['cnt'] = (!isset($licenseTypes[$licenseKey]['cnt'])) ? 1 : $licenseTypes[$licenseKey]['cnt'] + 1;
+                $licenseClass = $licenseKey;
+            }
+
             if (!empty($project)) {
-                $content .= '<tr>';
-                $content .= '<td><a href="#" onclick="$(\'.ele-'.md5($project['name']).'\').toggleClass(\'hide\');"><i class="rex-icon fa-info-circle"></i></a> '.((isset($project['name'])) ? trim($project['name']) : '').'</td>';
+                if (is_array($project['license'])) {
+                    $project['license'] = implode(',',$project['license']);
+                }
+                $content .= '<tr class="licenses '.$licenseClass.'">';
+                $content .= '<td><a href="#" onclick="$(\'.ele-'.md5($project['name']).'\').toggleClass(\'hide\');return false;"><i class="rex-icon fa-info-circle"></i></a> '.((isset($project['name'])) ? trim($project['name']) : '').'</td>';
                 $content .= '<td> '.((isset($project['license'])) ? trim($project['license']) : '').'</td>';
                 $content .= '<td> '.((isset($project['version'])) ? trim($project['version']) : '').'</td>';
                 $content .= '</tr>';
                 if (isset($project['homepage'])) {
-                    $content .= '<tr class="hide ele-'.md5($project['name']).'" id=""><td colspan="3">URL: <a href="'.trim($project['homepage']).'" target="_blank">'.trim($project['homepage']).'</a></td></tr>';
+                    $content .= '<tr class="hide ele-'.md5($project['name']).' licenses '.$licenseClass.'" id=""><td colspan="3">URL: <a href="'.trim($project['homepage']).'" target="_blank">'.trim($project['homepage']).'</a></td></tr>';
                 }
-                $content .= '<tr class="hide ele-'.md5($project['name']).'" id=""><td colspan="3">from file: '.$project['license-read-from'].'</td></tr>';
-                $content .= '<tr class="hide ele-'.md5($project['name']).'" id=""><td colspan="3">path: '.$project['path'].'</td></tr>';
+                $content .= '<tr class="hide ele-'.md5($project['name']).' licenses '.$licenseClass.'" id=""><td colspan="3">from file: '.$project['license-read-from'].'</td></tr>';
+                $content .= '<tr class="hide ele-'.md5($project['name']).' licenses '.$licenseClass.'" id=""><td colspan="3">path: '.$project['path'].'</td></tr>';
             }
         }
         $content .= '</tbody></table>';
-        return $content;
+        $pills = '';
+        foreach ($licenseTypes AS $md5 => $license) {
+            $pills .= '<button class="btn btn-success btn-xs license-selector btn-'.$md5.'" onClick=\'$(".licenses").hide();$(".license-selector").removeClass("btn-danger");$(".btn-'.$md5.'").addClass("btn-danger");$(".'.$md5.'").show();return false;\'>'.$license['name'].' ('.$license['cnt'].') </button> ';
+        }
+        return $pills.$content;
     }
 
-    static function setHeadline() {
+    static function setHeadline()
+    {
         return "# List of project licenses\ncreated ".date('d.m.Y H.i:s');
     }
 
-    static public function sortRepos($repos) {
+    static public function sortRepos($repos)
+    {
         uasort($repos, 'self::compareByName');
         return $repos;
     }
-    static function compareByName($a, $b) {
+    static function compareByName($a, $b)
+    {
       return strcmp($a["name"], $b["name"]);
     }
 }

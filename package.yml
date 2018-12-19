@@ -1,5 +1,5 @@
 package: ylicense
-version: '0.9.1'
+version: '0.9.5'
 author: Yakamara Media GmbH & Co. KG
 supportpage: https://github.com/yakamara/ylicense
 
@@ -12,6 +12,10 @@ page:
             icon: rex-icon fa-list
         table:
             title: 'translate:astable'
+            perm: ylicense[]
+            icon: rex-icon fa-table
+        addons:
+            title: 'translate:addons'
             perm: ylicense[]
             icon: rex-icon fa-table
         config:
