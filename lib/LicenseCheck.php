@@ -53,7 +53,7 @@ class LicenseCheck
                 }
             }
             elseif (preg_match('/^(.*)\.json$/i', $file->getBasename())) {
-                $data = array_merge($data,json_decode($file->getContents(),true));
+                $data = array_merge($data,(array) json_decode($file->getContents(),true));
                 $data['license-read-from'] = $file->getBasename();
             }
         }
