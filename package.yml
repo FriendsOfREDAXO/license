@@ -5,6 +5,7 @@ supportpage: https://github.com/yakamara/ylicense
 
 page:
     title: 'translate:title'
+    perm: ylicense[]
     subpages:
         main:
             title: 'translate:main'
