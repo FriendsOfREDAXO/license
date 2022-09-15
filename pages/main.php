@@ -1,6 +1,6 @@
 <?php
 $projects = LicenseCheck::getReposFromPath(rex_path::base());
-if (trim($this->getConfig('path')) != '') {
+if (trim($this->getConfig('path') ?? '') != '') {
     $additional_paths = explode("\n", $this->getConfig('path'));
     foreach ($additional_paths AS $path) {
         $projects = LicenseCheck::getReposFromPath(trim($path));
