@@ -62,7 +62,7 @@ class LicenseCheck
         }
 
         if (isset($data['license'])) {
-            $data['license'] = YLicenseStandardizer::standardize($data['license']);
+            $data['license'] = licenseStandardizer::standardize($data['license']);
         } else {
             return false;
         }

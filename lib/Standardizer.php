@@ -1,6 +1,6 @@
 <?php
 
-class YLicenseStandardizer
+class licenseStandardizer
 {
     public function __construct()
     {
