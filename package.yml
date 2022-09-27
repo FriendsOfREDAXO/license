@@ -26,7 +26,7 @@ page:
 requires:
     redaxo: '^5.5'
     php:
-        version: '>=7.1'
+        version: '>=7.4'
 
 console_commands:
     ylicense:list: list_short
