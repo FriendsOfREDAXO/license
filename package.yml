@@ -1,30 +1,26 @@
 package: ylicense
-version: '0.9.5'
+version: '0.9.6'
 author: Yakamara Media GmbH & Co. KG
 supportpage: https://github.com/yakamara/ylicense
 
 page:
     title: 'translate:title'
-    perm: ylicense[]
+    perm: admin[]
     subpages:
         main:
             title: 'translate:main'
-            perm: ylicense[]
             icon: rex-icon fa-list
         table:
             title: 'translate:astable'
-            perm: ylicense[]
             icon: rex-icon fa-table
         addons:
             title: 'translate:addons'
-            perm: ylicense[]
             icon: rex-icon fa-table
         config:
             title: 'translate:config'
-            perm: admin
             icon: rex-icon fa-wrench
 requires:
-    redaxo: '^5.5'
+    redaxo: '^5.12'
     php:
         version: '>=7.4'
 
