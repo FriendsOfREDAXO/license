@@ -13,6 +13,7 @@ class list_short extends rex_console_command
         }
         $projects = LicenseCheck::sortRepos($projects);
         echo LicenseCheck::displayProjectsAsMarkDown($projects, false);
+        return 1;
     }
 }
 
@@ -29,5 +30,6 @@ class list_full extends rex_console_command
         }
         $projects = LicenseCheck::sortRepos($projects);
         echo LicenseCheck::displayProjectsAsMarkDown($projects, true);
+        return 1;
     }
 }

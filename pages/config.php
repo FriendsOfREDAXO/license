@@ -1,5 +1,7 @@
 <?php
 
+/** @var rex_addon $this */
+
 $content = '';
 $buttons = '';
 

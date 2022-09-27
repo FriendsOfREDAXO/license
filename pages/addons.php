@@ -1,5 +1,7 @@
 <?php
 
+/** @var rex_addon $this */
+
 use Symfony\Component\Finder\Finder;
 
 $content = '';

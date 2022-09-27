@@ -1,5 +1,7 @@
 <?php
 
+/** @var rex_addon $this */
+
 $projects = LicenseCheck::getReposFromPath(rex_path::base());
 if ('' != trim($this->getConfig('path') ?? '')) {
     $additional_paths = explode("\n", $this->getConfig('path'));

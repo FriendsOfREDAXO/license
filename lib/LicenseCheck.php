@@ -19,6 +19,7 @@ class LicenseCheck
         } else {
             $finder->files()->ignoreUnreadableDirs()->in($path)->depth(1)->name(self::$licenseFiles);
         }
+        $projects = [];
         foreach ($finder as $file) {
             if (!isset($projects[dirname($file->getRealPath())])) {
                 $tmp = self::getReposInfo(dirname($file->getRealPath()));
@@ -69,7 +70,7 @@ class LicenseCheck
         return $data;
     }
 
-    public static function displayProjectsAsMarkDown($projects, $full = false)
+    public static function displayProjectsAsMarkDown($projects, $full = false): string
     {
         $markdown = self::setHeadline();
         $fields = explode(',', 'license,version,homepage,license-read-from,path,license-text');
