@@ -1,27 +1,27 @@
 <?php
+
 class YLicenseStandardizer
 {
-    function __construct()
+    public function __construct()
     {
     }
 
-    static public function standardize($license)
+    public static function standardize($license)
     {
         if (is_array($license)) {
-            $tmp = array();
-            foreach ($license AS $item) {
+            $tmp = [];
+            foreach ($license as $item) {
                 $tmp[] = self::resolveLicenseName($item);
             }
             $license = $tmp;
-        }
-        else {
+        } else {
             $license = self::resolveLicenseName($license);
         }
 
         return $license;
     }
 
-    static private function resolveLicenseName($name)
+    private static function resolveLicenseName($name)
     {
         if (preg_match('/^The MIT License(?: \(MIT\))$/i', $name)) {
             $name = 'MIT License';

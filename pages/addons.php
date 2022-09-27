@@ -1,12 +1,11 @@
 <?php
-use Symfony\Component\Finder\Finder;
 
+use Symfony\Component\Finder\Finder;
 
 $content = '';
 // Fehlende Lizenzen für Addons
-$projects = LicenseCheck::getReposFromPath(rex_path::src().'addons',false,true);
+$projects = LicenseCheck::getReposFromPath(rex_path::src().'addons', false, true);
 $projects = LicenseCheck::sortRepos($projects);
-
 
 $finder = new Finder();
 $finder->directories()->ignoreUnreadableDirs()->depth(0)->sortByName()->in(rex_path::src().'addons');
@@ -22,18 +21,16 @@ $content .= '
 <tbody>
 ';
 
-foreach ($finder AS $dir) {
+foreach ($finder as $dir) {
     $icon = 'warning';
     if (isset($projects[$dir->getRealPath()])) {
         if (is_array($projects[$dir->getRealPath()]['license'])) {
-            $license = '<label class="label label-success">'.implode(',',$projects[$dir->getRealPath()]['license']).'</label>';
-        }
-        else {
+            $license = '<label class="label label-success">'.implode(',', $projects[$dir->getRealPath()]['license']).'</label>';
+        } else {
             $license = '<label class="label label-success">'.$projects[$dir->getRealPath()]['license'].'</label>';
         }
         $icon = 'thumbs-up';
-    }
-    else {
+    } else {
         $license = '<label class="label label-danger">LICENSE is missing</label>';
     }
     $content .= '
@@ -49,8 +46,7 @@ $content .= '
 </tbody>
 </table>
 ';
-//$content = '<pre>'.LicenseCheck::displayProjectsAsTable($projects).'</pre>';
-
+// $content = '<pre>'.LicenseCheck::displayProjectsAsTable($projects).'</pre>';
 
 $fragment = new rex_fragment();
 $fragment->setVar('title', $this->i18n('main_title'), false);

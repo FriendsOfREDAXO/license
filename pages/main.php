@@ -1,28 +1,28 @@
 <?php
+
 $projects = LicenseCheck::getReposFromPath(rex_path::base());
-if (trim($this->getConfig('path') ?? '') != '') {
+if ('' != trim($this->getConfig('path') ?? '')) {
     $additional_paths = explode("\n", $this->getConfig('path'));
-    foreach ($additional_paths AS $path) {
+    foreach ($additional_paths as $path) {
         $projects = LicenseCheck::getReposFromPath(trim($path));
     }
 }
 $projects = LicenseCheck::sortRepos($projects);
 
-
-if (rex_get('function', 'string') == 'markdown') {
+if ('markdown' == rex_get('function', 'string')) {
     while (@ob_end_clean()) {
     }
-    header("Content-Type: text/plain");
+    header('Content-Type: text/plain');
     header('Content-Disposition: attachment; filename="ylicense.md"');
     echo LicenseCheck::displayProjectsAsMarkDown($projects);
-    exit();
+    exit;
 }
-elseif (rex_get('function', 'string') == 'pdf') {
+if ('pdf' == rex_get('function', 'string')) {
     while (@ob_end_clean()) {
     }
     $pdf = LicenseCheck::displayProjectsAsPdf($projects);
-    $pdf->Output('D',rex::getServerName().'.pdf',true);
-    exit();
+    $pdf->Output('D', rex::getServerName().'.pdf', true);
+    exit;
 }
 
 $content = '

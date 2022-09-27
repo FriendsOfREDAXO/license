@@ -6,9 +6,9 @@ $buttons = '';
 $csrfToken = rex_csrf_token::factory('ylicense');
 
 // Einstellungen speichern
-if (rex_post('formsubmit', 'string') == '1' && !$csrfToken->isValid()) {
+if ('1' == rex_post('formsubmit', 'string') && !$csrfToken->isValid()) {
     echo rex_view::error(rex_i18n::msg('csrf_token_invalid'));
-} elseif (rex_post('formsubmit', 'string') == '1') {
+} elseif ('1' == rex_post('formsubmit', 'string')) {
     $this->setConfig(rex_post('config', [
         ['path', 'string'],
     ]));
