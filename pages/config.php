@@ -5,7 +5,7 @@
 $content = '';
 $buttons = '';
 
-$csrfToken = rex_csrf_token::factory('ylicense');
+$csrfToken = rex_csrf_token::factory('license');
 
 // Einstellungen speichern
 if ('1' == rex_post('formsubmit', 'string') && !$csrfToken->isValid()) {
@@ -23,8 +23,8 @@ $content .= '<fieldset><legend>' . $this->i18n('config_legend') . '</legend>';
 // Einfaches Textfeld
 $formElements = [];
 $n = [];
-$n['label'] = '<label for="ylicense-config-url">' . $this->i18n('additional_paths') . '</label>';
-$n['field'] = '<textarea rows="10" class="form-control" id="ylicense-config-url" name="config[path]">'.$this->getConfig('path').'</textarea>';
+$n['label'] = '<label for="license-config-url">' . $this->i18n('additional_paths') . '</label>';
+$n['field'] = '<textarea rows="10" class="form-control" id="license-config-url" name="config[path]">'.$this->getConfig('path').'</textarea>';
 $formElements[] = $n;
 
 $fragment = new rex_fragment();

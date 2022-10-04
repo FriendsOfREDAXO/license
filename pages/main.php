@@ -15,7 +15,7 @@ if ('markdown' == rex_get('function', 'string')) {
     while (@ob_end_clean()) {
     }
     header('Content-Type: text/plain');
-    header('Content-Disposition: attachment; filename="ylicense.md"');
+    header('Content-Disposition: attachment; filename="license.md"');
     echo LicenseCheck::displayProjectsAsMarkDown($projects);
     exit;
 }
