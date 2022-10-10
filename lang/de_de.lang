@@ -6,6 +6,6 @@ config = Konfiguration
 
 license_astable = Als Tabelle
 license_config_legend = Einstellungen
-license_additional_paths = Weitere Pfade<br />(relativ oder absolut auf Server<br />Getrennt du \n)
+license_additional_paths = Weitere Pfade<br />(relativ oder absolut auf Server<br />Getrennt durch \n)
 license_config_save = Speichern
 license_config_saved = Konfiguration gespeichert
